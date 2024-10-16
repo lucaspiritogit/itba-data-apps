@@ -1,0 +1,6 @@
+airflow
+pandas
+python-dotenv
+requests
+pytest
+pytest-mock
