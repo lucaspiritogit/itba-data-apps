@@ -17,7 +17,7 @@ dag = DAG(
     default_args=default_args,
     description='Fetch WoW token data daily',
     schedule_interval='@daily',
-    start_date=datetime(2024, 7, 15),
+    start_date=datetime(2024, 8, 10),
     catchup=True,
     max_active_runs=1
 )
