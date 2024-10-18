@@ -1,7 +1,7 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
-from wowtokendag.battle_net_api import get_oauth_access_token, get_wow_token
+from wowtokendag.api import fetch_token_for_execution_day
 from wowtokendag.database_functions import create_table, analyze_token_data
 
 default_args = {
@@ -17,9 +17,9 @@ dag = DAG(
     default_args=default_args,
     description='Fetch WoW token data daily',
     schedule_interval='@daily',
-    start_date=datetime(2024, 8, 10),
+    start_date=datetime(2024, 9, 18),
     catchup=True,
-    max_active_runs=1
+    max_active_runs=1,
 )
 
 create_table_task = PythonOperator(
@@ -28,16 +28,9 @@ create_table_task = PythonOperator(
     dag=dag,
 )
 
-get_oauth_access_token_task = PythonOperator(
-    task_id='get_oauth_access_token_task',
-    python_callable=get_oauth_access_token,
-    provide_context=True,
-    dag=dag,
-)
-
 get_wow_token_task = PythonOperator(
     task_id='get_wow_token_task',
-    python_callable=get_wow_token,
+    python_callable=fetch_token_for_execution_day,
     provide_context=True,
     dag=dag,
 )
@@ -49,4 +42,4 @@ analyze_token_data_task = PythonOperator(
     dag=dag,
 )
 
-create_table_task >> get_oauth_access_token_task >> get_wow_token_task >> analyze_token_data_task
+create_table_task >> get_wow_token_task >> analyze_token_data_task
