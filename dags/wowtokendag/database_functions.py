@@ -40,8 +40,7 @@ def analyze_token_data(**kwargs):
     except UnicodeDecodeError as e:
         print(f"Unicode error: {e}")
 
-    df = pd.DataFrame(
-        rows, columns=['token_price_date', 'wow_token_price_in_gold'])
+    df = pd.DataFrame(rows, columns=['token_price_date', 'wow_token_price_in_gold'])
 
     df['price_change'] = df['wow_token_price_in_gold'].diff()
 

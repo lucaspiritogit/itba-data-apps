@@ -1,13 +1,13 @@
 import unittest
 from unittest.mock import patch, MagicMock
 from datetime import datetime
-from api import fetch_token_for_execution_day
+from dags.wowtokendag.api import fetch_token_for_execution_day
 
 
 class TestFetchTokenForExecutionDay(unittest.TestCase):
 
-    @patch('api.requests.get')
-    @patch('api.save_to_postgres')
+    @patch('dags.wowtokendag.api.requests.get')
+    @patch('dags.wowtokendag.api.save_to_postgres')
     def test_fetch_token_matching_record_found(self, mock_save_to_postgres, mock_requests_get):
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -19,20 +19,20 @@ class TestFetchTokenForExecutionDay(unittest.TestCase):
         ]
         mock_requests_get.return_value = mock_response
 
-        execution_date = datetime(2024, 9, 18)
+        dag_execution_date = datetime(2024, 9, 18)
 
         kwargs = {
-            'dag_run': MagicMock(execution_date=execution_date)
+            'dag_run': MagicMock(execution_date=dag_execution_date)
         }
 
         fetch_token_for_execution_day(**kwargs)
 
         mock_save_to_postgres.assert_called_once_with(
-            execution_date, 186868
+            dag_execution_date, 186868
         )
 
-    @patch('api.requests.get')
-    @patch('api.save_to_postgres')
+    @patch('dags.wowtokendag.api.requests.get')
+    @patch('dags.wowtokendag.api.save_to_postgres')
     def test_fetch_token_matching_record_not_found(self, mock_save_to_postgres, mock_requests_get):
         mock_response = MagicMock()
         mock_response.status_code = 200
