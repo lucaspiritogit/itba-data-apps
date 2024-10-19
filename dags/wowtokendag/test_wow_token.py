@@ -19,16 +19,16 @@ class TestFetchTokenForExecutionDay(unittest.TestCase):
         ]
         mock_requests_get.return_value = mock_response
 
-        execution_date = datetime(2024, 9, 18)
+        dag_execution_date = datetime(2024, 9, 18)
 
         kwargs = {
-            'dag_run': MagicMock(execution_date=execution_date)
+            'dag_run': MagicMock(execution_date=dag_execution_date)
         }
 
         fetch_token_for_execution_day(**kwargs)
 
         mock_save_to_postgres.assert_called_once_with(
-            execution_date, 186868
+            dag_execution_date, 186868
         )
 
     @patch('dags.wowtokendag.api.requests.get')

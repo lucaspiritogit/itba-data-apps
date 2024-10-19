@@ -3,6 +3,12 @@ from datetime import datetime
 import time
 from wowtokendag.database_functions import save_to_postgres
 
+class TokenDataFetchError(Exception):
+    def __init__(self, status_code, response_text):
+        super().__init__(f"Failed to fetch token data: {status_code}, {response_text}")
+        self.status_code = status_code
+        self.response_text = response_text
+
 
 def fetch_token_for_execution_day(**kwargs):
     url = "https://data.wowtoken.app/token/history/us/30d.json"
@@ -13,21 +19,20 @@ def fetch_token_for_execution_day(**kwargs):
 
     if response.status_code == 200:
         data = response.json()
-        execution_date = kwargs['dag_run'].execution_date
+        dag_execution_date = kwargs['dag_run'].execution_date
 
         matching_record = None
         for record in data:
             record_time = datetime.fromisoformat(
                 record['time'].replace("Z", "+00:00"))
-            if record_time.date() == execution_date.date():
+            if record_time.date() == dag_execution_date.date():
                 matching_record = record
                 break
 
         if matching_record:
             save_to_postgres(
-                execution_date, matching_record['value'])
+                dag_execution_date, matching_record['value'])
         else:
-            print(f"No matching record found for {execution_date.date()}")
+            print(f"No matching record found for {dag_execution_date.date()}")
     else:
-        raise Exception(f"Failed to fetch token data: {
-                        response.status_code}, {response.text}")
+        raise TokenDataFetchError(response.status_code, response.text)

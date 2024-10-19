@@ -54,7 +54,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
-    AIRFLOW_CONN_CUSTOM_POSTGRES: postgresql+psycopg2://wow:wow@custom-db/wow
+    AIRFLOW_CONN_CUSTOM_POSTGRES: postgresql+psycopg2://wow:wow@custom-db:5432/wow
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ""
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
@@ -148,6 +148,8 @@ services:
       <<: *airflow-common-depends-on
       airflow-init:
         condition: service_completed_successfully
+      custom-db:
+        condition: service_healthy
 
   airflow-scheduler:
     <<: *airflow-common
@@ -211,6 +213,14 @@ services:
     command:
       - -c
       - |
+        airflow db init
+        airflow connections add 'custom_postgres' \
+          --conn-type 'postgres' \
+          --conn-host 'host.docker.internal' \
+          --conn-login 'wow' \
+          --conn-password 'wow' \
+          --conn-port '5433' \
+          --conn-schema 'wow'
         if [[ -z "${AIRFLOW_UID}" ]]; then
           echo
           echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
