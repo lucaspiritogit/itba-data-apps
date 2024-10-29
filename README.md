@@ -16,7 +16,7 @@ Como se menciono anteriormente, al ser el oro la moneda principal, es importante
 
 # Componentes principales del DAG
 
-![Simple diagram](./diagram.png)
+![Simple diagram](./diagram.png?)
 
 ## wow_token_dag.py
 
@@ -46,7 +46,7 @@ Esto se realiza mediante la conexion a `custom-db`, el cual es un postgres 16 cr
 
 1. Clonar el repositorio: `git clone https://github.com/lucaspiritogit/dag-wow-token-price-check`
 2. Entrar a la carpeta del repositorio clonado utilizando `cd` en una terminal.
-3. Crear un .env y pegar las credenciales enviadas por slack, o pegar el archivo .env enviado por slack con las credenciales enviadas.
+3. Crear un .env y pegar las credenciales enviadas por slack, o pegar el archivo .env enviado por slack con las credenciales enviadas en la carpeta raiz del proyecto.
 4. Si no se levanta por primera vez el aplicativo, correr primero: `docker compose down --volumes --remove-orphans`
 5. En la misma terminal, ejecutar: `docker compose up --build`.
 6. Al finalizar la ejecucion del docker, abrir un navegador en modo incognito y dirigirse a http://localhost:8080
@@ -58,5 +58,6 @@ Esto se realiza mediante la conexion a `custom-db`, el cual es un postgres 16 cr
 10. Ademas de poder observar el DAG, se puede obsevar el archivo csv en la carpeta raiz `output/wow_token_analysis.csv` para la carga de los datos transformados.
 
 # Resultado
+
 1. La ejecucion del DAG va desde el 2024-09-19 hasta el 2024-10-19 (_1 mes_) de manera diaria, se encarga de crear el archivo `wow_token_analysis.csv` en la carpeta `/output` en tiempo real basado en un dataframe hecho en pandas. El .csv tiene la diferencia de precio en oro de cada dia para ver si subio o bajo.
 2. Tambien podemos observar la tabla `wow_token_data` dentro del schema `2024_lucas_ignacio_pirito_schema` donde se guarda la informacion.
