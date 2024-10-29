@@ -55,6 +55,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://airflow:airflow@postgres/airflow
     AIRFLOW_CONN_CUSTOM_POSTGRES: postgresql+psycopg2://wow:wow@custom-db:5432/wow
+    AIRFLOW_CONN_CUSTOM_REDSHIFT: redshift+psycopg2://${REDSHIFT_USER}:${REDSHIFT_PASSWORD}@${REDSHIFT_HOST}:${REDSHIFT_PORT}/${REDSHIFT_DB}
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ""
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "false"
@@ -209,18 +210,20 @@ services:
   airflow-init:
     <<: *airflow-common
     entrypoint: /bin/bash
+    env_file:
+      - .env
     # yamllint disable rule:line-length
     command:
       - -c
       - |
         airflow db init
-        airflow connections add 'custom_postgres' \
-          --conn-type 'postgres' \
-          --conn-host 'host.docker.internal' \
-          --conn-login 'wow' \
-          --conn-password 'wow' \
-          --conn-port '5433' \
-          --conn-schema 'wow'
+        airflow connections add 'custom_redshift' \
+          --conn-type 'redshift' \
+          --conn-host "$REDSHIFT_HOST" \
+          --conn-login "$REDSHIFT_USER" \
+          --conn-password "$REDSHIFT_PASSWORD" \
+          --conn-port "$REDSHIFT_PORT" \
+          --conn-schema "$REDSHIFT_DB"
         if [[ -z "${AIRFLOW_UID}" ]]; then
           echo
           echo -e "\033[1;33mWARNING!!!: AIRFLOW_UID not set!\e[0m"
