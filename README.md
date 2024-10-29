@@ -45,16 +45,18 @@ Esto se realiza mediante la conexion a `custom-db`, el cual es un postgres 16 cr
 # Como levantar la aplicacion
 
 1. Clonar el repositorio: `git clone https://github.com/lucaspiritogit/dag-wow-token-price-check`
-2. Entrar a la carpeta del repositorio clonado
-3. Crear un archivo `.env` (_no es necesario poner ninguna credencial dado que la API es de la comunidad hecho por BattleNet_) en la raiz del proyecto para que se genere al AIRFLOW_UID.
-4. En la terminal de preferencia, ejecutar: `docker compose up --build`
-5. Al finalizar la ejecucion del docker, abrir un navegador en modo incognito y dirigirse a http://localhost:8080
-6. Ingresar al airflow con las siguientes credenciales:
+2. Entrar a la carpeta del repositorio clonado utilizando `cd` en una terminal.
+3. Crear un .env y pegar las credenciales enviadas por slack, o pegar el archivo .env enviado por slack con las credenciales enviadas.
+4. Si no se levanta por primera vez el aplicativo, correr primero: `docker compose down --volumes --remove-orphans`
+5. En la misma terminal, ejecutar: `docker compose up --build`.
+6. Al finalizar la ejecucion del docker, abrir un navegador en modo incognito y dirigirse a http://localhost:8080
+7. Ingresar al airflow con las siguientes credenciales:
    1. user: airflow
-   2. pass airflow
-7. En el caso de que este pausado, despausar el DAG para que comience la ejecucion.
-8. Ademas de poder observar el DAG, se puede obsevar el archivo csv en la carpeta raiz `output/wow_token_analysis.csv` para la carga de los datos transformados.
+   2. pass: airflow
+8. En el caso de que este pausado, despausar el DAG para que comience la ejecucion.
+9. El DAG se ejecutara y empezara a cargar cada dia, este proceso puede tardar unos segundos en reflejarse dada la comunicacion con Redshift.
+10. Ademas de poder observar el DAG, se puede obsevar el archivo csv en la carpeta raiz `output/wow_token_analysis.csv` para la carga de los datos transformados.
 
 # Resultado
-
-La ejecucion del DAG va desde el 2024-09-19 hasta el 2024-10-19 (_1 mes_) de manera diaria, se encarga de crear el archivo `wow_token_analysis.csv` en la carpeta `/output` en tiempo real basado en un dataframe hecho en pandas. El .csv tiene la diferencia de precio en oro de cada dia para ver si subio o bajo.
+1. La ejecucion del DAG va desde el 2024-09-19 hasta el 2024-10-19 (_1 mes_) de manera diaria, se encarga de crear el archivo `wow_token_analysis.csv` en la carpeta `/output` en tiempo real basado en un dataframe hecho en pandas. El .csv tiene la diferencia de precio en oro de cada dia para ver si subio o bajo.
+2. Tambien podemos observar la tabla `wow_token_data` dentro del schema `2024_lucas_ignacio_pirito_schema` donde se guarda la informacion.
